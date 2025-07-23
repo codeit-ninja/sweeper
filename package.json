@@ -1,0 +1,54 @@
+{
+    "name": "secret-scanner",
+    "version": "0.1.0",
+    "description": "",
+    "type": "module",
+    "scripts": {
+        "dev": "vite dev",
+        "build": "vite build",
+        "preview": "vite preview",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+        "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+        "tauri": "tauri",
+        "format": "prettier --write .",
+        "lint": "prettier --check ."
+    },
+    "license": "MIT",
+    "dependencies": {
+        "@fontsource-variable/bitcount-grid-single": "^5.2.1",
+        "@fontsource-variable/handjet": "^5.2.6",
+        "@fontsource-variable/museomoderno": "^5.2.7",
+        "@fontsource/gotu": "^5.2.6",
+        "@hackernoon/pixel-icon-library": "^1.0.6",
+        "@tauri-apps/api": "^2.7.0",
+        "@tauri-apps/plugin-opener": "^2.4.0",
+        "@tauri-apps/plugin-sql": "~2.3.0",
+        "bits-ui": "^2.8.11",
+        "clsx": "^2.1.1",
+        "emittery": "^1.2.0",
+        "neverthrow": "^8.2.0",
+        "prettier-plugin-svelte": "^3.4.0",
+        "runed": "^0.31.0",
+        "tailwind-merge": "^3.3.1"
+    },
+    "devDependencies": {
+        "@sveltejs/adapter-static": "^3.0.8",
+        "@sveltejs/kit": "^2.25.1",
+        "@sveltejs/vite-plugin-svelte": "^5.1.1",
+        "@tailwindcss/vite": "^4.0.0",
+        "@tauri-apps/cli": "^2.7.1",
+        "prettier": "^3.4.2",
+        "prettier-plugin-svelte": "^3.3.3",
+        "prettier-plugin-tailwindcss": "^0.6.11",
+        "svelte": "^5.36.13",
+        "svelte-check": "^4.3.0",
+        "tailwindcss": "^4.0.0",
+        "typescript": "~5.6.3",
+        "vite": "^6.3.5"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "esbuild"
+        ]
+    }
+}
