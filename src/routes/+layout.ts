@@ -5,7 +5,7 @@ import { browser } from '$app/environment';
 import { app } from '$lib/core/app/app.svelte';
 
 // See: https://v2.tauri.app/start/frontend/sveltekit/ for more info
-export const prerender = true;
+export const prerender = false;
 export const ssr = false;
 
 export const load = async () => {

@@ -15,6 +15,7 @@
     },
     "license": "MIT",
     "dependencies": {
+        "@elevenlabs/elevenlabs-js": "^2.7.0",
         "@fontsource-variable/bitcount-grid-single": "^5.2.1",
         "@fontsource-variable/handjet": "^5.2.6",
         "@fontsource-variable/museomoderno": "^5.2.7",
@@ -23,15 +24,18 @@
         "@tauri-apps/api": "^2.7.0",
         "@tauri-apps/plugin-opener": "^2.4.0",
         "@tauri-apps/plugin-sql": "~2.3.0",
+        "@tauri-apps/plugin-store": "~2.3.0",
         "bits-ui": "^2.8.11",
         "clsx": "^2.1.1",
         "emittery": "^1.2.0",
         "neverthrow": "^8.2.0",
+        "octokit": "^5.0.3",
         "prettier-plugin-svelte": "^3.4.0",
         "runed": "^0.31.0",
         "tailwind-merge": "^3.3.1"
     },
     "devDependencies": {
+        "@octokit/types": "^14.1.0",
         "@sveltejs/adapter-static": "^3.0.8",
         "@sveltejs/kit": "^2.25.1",
         "@sveltejs/vite-plugin-svelte": "^5.1.1",

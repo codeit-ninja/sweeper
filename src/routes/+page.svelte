@@ -1,4 +1,6 @@
 <script lang="ts">
+    import type { ScanJob } from '$core/app/database/scan-jobs';
+    import type { Model } from '$core/app/database/table';
     import { app } from '$core/app';
     import { Button } from '$lib/components/ui/button';
     import { dialog } from '$lib/components/ui/dialog';
@@ -32,10 +34,14 @@
         }
     };
 
-    onMount(() => {
-        dialog.open = true;
-        dialog.title = 'Create New Scan';
-        dialog.component = dialogContent;
+    let scans = $state<Model<ScanJob>[]>([]);
+
+    onMount(async () => {
+        const scanJobs = await app.database.getTable('scan_jobs').getAll();
+
+        if (scanJobs.isOk()) {
+            scans = scanJobs.value;
+        }
     });
 </script>
 
@@ -48,7 +54,7 @@
             <Input
                 label="Matcher"
                 name="matcher"
-                value={`/(?<=\"|\'|\s|=)(sk_[a-zA-Z0-9]{48}|[a-zA-Z0-9]{32})(?=\"|\'|\n|$)/gm`}
+                value={`(?<="|'|\\s|=)(xai-[a-zA-Z0-9]{64,})(?="|'|\\s|$)`}
                 placeholder={`Example: /(?<=\"|\'|\s|=)(sk_[a-zA-Z0-9]{48}|[a-zA-Z0-9]{32})(?=\"|\'|\n|$)/gm`}
             />
         </div>
@@ -58,20 +64,20 @@
                 name="searchPatterns"
                 items={[
                     {
-                        label: 'sk_+elevenlabs+api_key+OR+api-key+extension:py',
-                        value: 'sk_+elevenlabs+api_key+OR+api-key+extension:py',
+                        label: 'xai_+xai+api_key+OR+api-key+extension:py',
+                        value: 'xai_+xai+api_key+OR+api-key+extension:py',
                     },
                     {
-                        label: 'sk_+elevenlabs+api_key+OR+api-key+extension:js',
-                        value: 'sk_+elevenlabs+api_key+OR+api-key+extension:js',
+                        label: 'xai_+xai+api_key+OR+api-key+extension:js',
+                        value: 'xai_+xai+api_key+OR+api-key+extension:js',
                     },
                     {
-                        label: 'sk_+elevenlabs+api_key+OR+api-key+extension:env',
-                        value: 'sk_+elevenlabs+api_key+OR+api-key+extension:env',
+                        label: 'xai_+xai+api_key+OR+api-key+extension:env',
+                        value: 'xai_+xai+api_key+OR+api-key+extension:env',
                     },
                     {
-                        label: 'elevenlabs+xi_api_key+extension:js',
-                        value: 'elevenlabs+xi_api_key+extension:js',
+                        label: 'xai+xai_api_key+extension:js',
+                        value: 'xai+xai_api_key+extension:js',
                     },
                 ]}
             />
@@ -82,7 +88,8 @@
     </form>
 {/snippet}
 
-<div>
+<div class="mb-6 flex items-center justify-between">
+    <H level="3">Latest scan jobs</H>
     <Button
         onclick={() => {
             dialog.open = true;
@@ -90,4 +97,23 @@
             dialog.component = dialogContent;
         }}>Create new scan</Button
     >
+</div>
+<div class="grid gap-1">
+    <div class="grid grid-cols-[30%_30%_20%_20%] gap-2 rounded-md bg-gray-900 px-4 py-2">
+        <span class="font-bold">Name</span>
+        <span class="font-bold">Matcher</span>
+        <span class="font-bold">Created At</span>
+        <span class="font-bold">Started At</span>
+    </div>
+    {#each scans as scan}
+        <a
+            class="grid grid-cols-[30%_30%_20%_20%] gap-2 rounded-md px-4 py-2 hover:bg-primary-950"
+            href="/scans/{scan.id}"
+        >
+            <span class="truncate">{scan.name}</span>
+            <span class="truncate">{scan.matcher}</span>
+            <span class="truncate">{scan.createdAt}</span>
+            <span class="truncate">{scan.startedAt ? scan.startedAt : 'Not started yet'}</span>
+        </a>
+    {/each}
 </div>

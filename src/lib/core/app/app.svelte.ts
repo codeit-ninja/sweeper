@@ -1,7 +1,10 @@
 import { Bootable } from '$lib/bootable.svelte';
 import { Scanner } from '$core/scanner';
 import { page } from '$app/state';
-import Database from '@tauri-apps/plugin-sql';
+import { Database } from './database.svelte';
+import DB from '@tauri-apps/plugin-sql';
+import { Store } from '@tauri-apps/plugin-store';
+import { watch } from 'runed';
 
 export type Route = {
     name: string;
@@ -13,12 +16,16 @@ export type Route = {
     };
 };
 
+export interface AppSettings {
+    githubToken: string;
+}
+
 export class App extends Bootable {
     enabled = true;
 
     manualBoot = true;
 
-    database: Database | null = $state(null);
+    database = new Database();
 
     scanner = new Scanner();
 
@@ -45,11 +52,28 @@ export class App extends Bootable {
         return this.routes.find((route) => route.path === page.url.pathname) || this.routes[0];
     });
 
-    async boot() {
-        this.database = await Database.load('sqlite:data.db');
-        await this.scanner.boot();
+    store = $state<Store>() as Store;
 
-        console.log('App booted');
+    settings: AppSettings = $state({
+        githubToken: '',
+    });
+
+    async boot() {
+        await DB.load('sqlite:data.db');
+        await this.scanner.boot();
+        await this.database.boot();
+
+        this.store = await Store.load('settings.json');
+        this.settings = (await this.store.get<AppSettings>('settings')) || this.settings;
+
+        $effect.root(() => {
+            watch(
+                () => $state.snapshot(this.settings),
+                () => {
+                    this.store.set('settings', this.settings);
+                },
+            );
+        });
     }
 }
 

@@ -1,13 +1,20 @@
 import { app } from '$core/app';
 import { Bootable } from '$lib/bootable.svelte';
-import { errAsync, fromPromise, ok, type Result, ResultAsync } from 'neverthrow';
+import { errAsync, fromPromise, fromSafePromise, ok, type Result, ResultAsync } from 'neverthrow';
 import Worker from './scanner.worker?worker';
 import type { QueryResult } from '@tauri-apps/plugin-sql';
+import type { DatabaseError } from '$core/app/database/table';
+import type { HitEvent } from './scanner.worker';
 
-type DATABASE_NOT_INITIALIZED_ERROR = {
-    type: 'SCANNER_DATABASE_ERROR';
-    message: string;
+export const ScannerErrors = {
+    CHECK_FOR_JOBS_ERROR: (details: string) => ({
+        type: 'CHECK_FOR_JOBS_ERROR' as const,
+        message: 'Error checking for scan jobs',
+        details,
+    }),
 };
+
+export type ScannerError = ReturnType<(typeof ScannerErrors)[keyof typeof ScannerErrors]>;
 
 export class Scanner extends Bootable {
     enabled = true;
@@ -16,42 +23,73 @@ export class Scanner extends Bootable {
 
     worker = $state<Worker>();
 
+    /**
+     * Interval for checking for scan jobs.
+     * This is used to periodically check for new scan jobs and start them.
+     *
+     * @type {number | null}
+     * @memberof Scanner
+     * @private
+     */
+    #interval: number | null = null;
+
     async boot() {
-        // const result = await app.database?.execute('INSERT INTO scanners (matcher, patterns) VALUES (?, ?)', [
-        //     '/(?<="|\'|\s|=)(sk_[a-zA-Z0-9]{48}|[a-zA-Z0-9]{32})(?="|\'|\n|$)/gm',
-        //     '["sk_12345678901234567890123456789012345678901234567890", "sk_09876543210987654321098765432109876543210987654321"]',
-        // ]);
-        //const result = await app.database?.execute(
-        //     'CREATE TABLE IF NOT EXISTS scanners (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL UNIQUE, matcher TEXT NOT NULL, patterns JSON NOT NULL)',
-        // );
-        //const result = await app.database?.select('SELECT * FROM scanners');
-        //console.log(result);
+        //this.#interval = setInterval(() => this.checkForJobs(), 1000);
+        this.checkForJobs();
+        this.worker = new Worker();
+
+        this.worker.onmessage = (event: MessageEvent<HitEvent>) => {
+            if (event.data.type === 'hit') {
+                const { jobId, repo, keys, hash } = event.data.payload;
+
+                app.database.getTable('scan_hits').insert({
+                    jobId,
+                    output: { repo, hash, keys },
+                });
+            }
+        };
     }
 
-    create(
-        name: string,
-        matcher: string,
-        patterns: string[],
-    ): ResultAsync<QueryResult, DATABASE_NOT_INITIALIZED_ERROR> {
-        if (!app.database) {
-            return errAsync({
-                type: 'SCANNER_DATABASE_ERROR',
-                message: 'Database is not available',
+    async checkForJobs() {
+        const scanJobs = await app.database.getTable('scan_jobs').getMany({ startedAt: null });
+        console.log(scanJobs);
+        if (scanJobs.isOk()) {
+            if (scanJobs.value.length === 0) {
+                return;
+            }
+
+            this.worker!.postMessage({ type: 'jobs', payload: scanJobs.value });
+
+            scanJobs.value.forEach((job) => {
+                app.database.getTable('scan_jobs').update(
+                    {
+                        startedAt: new Date().toISOString(),
+                    },
+                    {
+                        id: job.id,
+                    },
+                );
             });
         }
+    }
 
-        return fromPromise(
-            app.database.execute('INSERT INTO scanners (name, matcher, patterns) VALUES (?, ?, ?)', [
-                name,
-                matcher,
-                patterns,
-            ]),
-            (error) => {
-                return {
-                    type: 'SCANNER_DATABASE_ERROR',
-                    message: error as string,
-                };
-            },
-        );
+    create(name: string, matcher: string, patterns: string[]): ResultAsync<QueryResult, DatabaseError> {
+        return app.database.getTable('scan_jobs').insert({
+            name,
+            matcher,
+            patterns,
+        });
+    }
+
+    shutdown(): void {
+        if (this.#interval) {
+            clearInterval(this.#interval);
+            this.#interval = null;
+        }
+
+        if (this.worker) {
+            this.worker.terminate();
+            this.worker = undefined;
+        }
     }
 }
