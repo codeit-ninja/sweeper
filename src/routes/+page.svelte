@@ -7,6 +7,7 @@
     import { H } from '$lib/components/ui/h';
     import { Input, Options } from '$lib/components/ui/input';
     import { onMount } from 'svelte';
+    import { resource } from 'runed';
 
     const submit = async (event: Event) => {
         event.preventDefault();
@@ -34,15 +35,20 @@
         }
     };
 
-    let scans = $state<Model<ScanJob>[]>([]);
-
-    onMount(async () => {
-        const scanJobs = await app.database.getTable('scan_jobs').getAll();
-
-        if (scanJobs.isOk()) {
-            scans = scanJobs.value;
-        }
+    let page = $state(1);
+    app.pocketbase.client.collection('sweep_jobs').subscribe('*', (e) => {
+        console.log(e);
     });
+
+    const jobs = resource(
+        () => page,
+        () => app.pocketbase.client.collection('sweep_jobs').getList(page),
+    );
+    // onMount(async () => {
+    //     dialog.open = true;
+    //     dialog.title = 'Create New Scan';
+    //     dialog.component = dialogContent;
+    // });
 </script>
 
 {#snippet dialogContent()}
@@ -105,7 +111,7 @@
         <span class="font-bold">Created At</span>
         <span class="font-bold">Started At</span>
     </div>
-    {#each scans as scan}
+    {#each jobs.current?.items! as scan}
         <a
             class="grid grid-cols-[30%_30%_20%_20%] gap-2 rounded-md px-4 py-2 hover:bg-primary-950"
             href="/scans/{scan.id}"

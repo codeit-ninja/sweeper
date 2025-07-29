@@ -32,6 +32,9 @@ importers:
       '@tauri-apps/plugin-opener':
         specifier: ^2.4.0
         version: 2.4.0
+      '@tauri-apps/plugin-shell':
+        specifier: ~2
+        version: 2.3.0
       '@tauri-apps/plugin-sql':
         specifier: ~2.3.0
         version: 2.3.0
@@ -53,6 +56,9 @@ importers:
       octokit:
         specifier: ^5.0.3
         version: 5.0.3
+      pocketbase:
+        specifier: ^0.26.2
+        version: 0.26.2
       prettier-plugin-svelte:
         specifier: ^3.4.0
         version: 3.4.0(prettier@3.6.2)(svelte@5.36.13)
@@ -727,6 +733,9 @@ packages:
   '@tauri-apps/plugin-opener@2.4.0':
     resolution: {integrity: sha512-43VyN8JJtvKWJY72WI/KNZszTpDpzHULFxQs0CJBIYUdCRowQ6Q1feWTDb979N7nldqSuDOaBupZ6wz2nvuWwQ==}
 
+  '@tauri-apps/plugin-shell@2.3.0':
+    resolution: {integrity: sha512-6GIRxO2z64uxPX4CCTuhQzefvCC0ew7HjdBhMALiGw74vFBDY95VWueAHOHgNOMV4UOUAFupyidN9YulTe5xlA==}
+
   '@tauri-apps/plugin-sql@2.3.0':
     resolution: {integrity: sha512-JYwIocfsLaDWa41LMiZWuzts7yCJR+EpZPRmgpO7Gd7XiAS9S67dKz306j/k/d9XntB0YopMRBol2OIWMschuA==}
 
@@ -981,6 +990,9 @@ packages:
   picomatch@4.0.3:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
+
+  pocketbase@0.26.2:
+    resolution: {integrity: sha512-WA8EOBc3QnSJh8rJ3iYoi9DmmPOMFIgVfAmIGux7wwruUEIzXgvrO4u0W2htfQjGIcyezJkdZOy5Xmh7SxAftw==}
 
   postcss@8.5.6:
     resolution: {integrity: sha512-3Ybi1tAuwAP9s0r1UQ2J4n5Y0G05bJkpUIO0/bI9MhwmD70S5aTWbXGBwxHrelT+XM1k6dM0pk+SwNkpTRN7Pg==}
@@ -1740,6 +1752,10 @@ snapshots:
     dependencies:
       '@tauri-apps/api': 2.7.0
 
+  '@tauri-apps/plugin-shell@2.3.0':
+    dependencies:
+      '@tauri-apps/api': 2.7.0
+
   '@tauri-apps/plugin-sql@2.3.0':
     dependencies:
       '@tauri-apps/api': 2.7.0
@@ -1952,6 +1968,8 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.3: {}
+
+  pocketbase@0.26.2: {}
 
   postcss@8.5.6:
     dependencies:

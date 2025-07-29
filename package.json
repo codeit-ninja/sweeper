@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "vite dev",
         "build": "vite build",
+        "pocketbase-types": "npx pocketbase-typegen --url http://localhost:49230 --email richard@codeit.ninja --password 'vnPAB9TaxgMe@c2GVQEX' --out src/lib/core/app/pocketbase/pocketbase.ts",
         "preview": "vite preview",
         "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
         "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -23,6 +24,7 @@
         "@hackernoon/pixel-icon-library": "^1.0.6",
         "@tauri-apps/api": "^2.7.0",
         "@tauri-apps/plugin-opener": "^2.4.0",
+        "@tauri-apps/plugin-shell": "~2",
         "@tauri-apps/plugin-sql": "~2.3.0",
         "@tauri-apps/plugin-store": "~2.3.0",
         "bits-ui": "^2.8.11",
@@ -30,6 +32,7 @@
         "emittery": "^1.2.0",
         "neverthrow": "^8.2.0",
         "octokit": "^5.0.3",
+        "pocketbase": "^0.26.2",
         "prettier-plugin-svelte": "^3.4.0",
         "runed": "^0.31.0",
         "tailwind-merge": "^3.3.1"

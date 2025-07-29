@@ -4,7 +4,10 @@ import { page } from '$app/state';
 import { Database } from './database.svelte';
 import DB from '@tauri-apps/plugin-sql';
 import { Store } from '@tauri-apps/plugin-store';
+import { Command } from '@tauri-apps/plugin-shell';
 import { watch } from 'runed';
+import { appDataDir } from '@tauri-apps/api/path';
+import { Pocketbase } from './pocketbase';
 
 export type Route = {
     name: string;
@@ -28,6 +31,8 @@ export class App extends Bootable {
     database = new Database();
 
     scanner = new Scanner();
+
+    pocketbase = new Pocketbase();
 
     routes = $state<Route[]>([
         {
@@ -62,6 +67,16 @@ export class App extends Bootable {
         await DB.load('sqlite:data.db');
         await this.scanner.boot();
         await this.database.boot();
+
+        const rootDir = await appDataDir();
+        const command = Command.sidecar('binaries/pocketbase', [
+            'serve',
+            '--http=0.0.0.0:49230',
+            `--dir=${rootDir}/pb_data`,
+            `--publicDir=${rootDir}/pb_public`,
+            `--migrationsDir=${rootDir}/pb_migrations`,
+        ]);
+        await command.spawn();
 
         this.store = await Store.load('settings.json');
         this.settings = (await this.store.get<AppSettings>('settings')) || this.settings;

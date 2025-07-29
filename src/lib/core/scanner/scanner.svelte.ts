@@ -7,10 +7,15 @@ import type { DatabaseError } from '$core/app/database/table';
 import type { HitEvent } from './scanner.worker';
 
 export const ScannerErrors = {
-    CHECK_FOR_JOBS_ERROR: (details: string) => ({
+    CHECK_FOR_JOBS_ERROR: (data?: any) => ({
         type: 'CHECK_FOR_JOBS_ERROR' as const,
         message: 'Error checking for scan jobs',
-        details,
+        data,
+    }),
+    CREATE_JOB_ERROR: (data?: any) => ({
+        type: 'CREATE_JOB_ERROR' as const,
+        message: 'Error creating scan job',
+        data,
     }),
 };
 
@@ -73,12 +78,23 @@ export class Scanner extends Bootable {
         }
     }
 
-    create(name: string, matcher: string, patterns: string[]): ResultAsync<QueryResult, DatabaseError> {
-        return app.database.getTable('scan_jobs').insert({
+    create(name: string, matcher: string, patterns: string[]): ResultAsync<QueryResult, ScannerError> {
+        const job = {
             name,
             matcher,
             patterns,
-        });
+        };
+
+        return fromPromise(
+            app.pocketbase.client.collection('sweep_jobs').create({
+                name,
+                matcher,
+                patterns,
+            }),
+            () => {
+                return ScannerErrors.CREATE_JOB_ERROR(job);
+            },
+        );
     }
 
     shutdown(): void {

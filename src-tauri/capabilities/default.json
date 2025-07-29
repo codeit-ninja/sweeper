@@ -1,17 +1,41 @@
 {
-  "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "Capability for the main window",
-  "windows": [
-    "main"
-  ],
-  "permissions": [
-    "core:default",
-    "opener:default",
-    "sql:allow-execute",
-    "sql:allow-load",
-    "sql:allow-close",
-    "sql:allow-select",
-    "store:default"
-  ]
+    "$schema": "../gen/schemas/desktop-schema.json",
+    "identifier": "default",
+    "description": "Capability for the main window",
+    "windows": ["main"],
+    "permissions": [
+        "core:default",
+        "opener:default",
+        "sql:allow-execute",
+        "sql:allow-load",
+        "sql:allow-close",
+        "sql:allow-select",
+        "store:default",
+        {
+            "identifier": "shell:allow-spawn",
+            "allow": [
+                {
+                    "args": [
+                        "serve",
+                        {
+                            "validator": "\\S+"
+                        },
+                        {
+                            "validator": "\\S+"
+                        },
+                        {
+                            "validator": "\\S+"
+                        },
+                        {
+                            "validator": "\\S+"
+                        }
+                    ],
+                    "name": "binaries/pocketbase",
+                    "sidecar": true
+                }
+            ]
+        },
+        "shell:allow-open",
+        "shell:default"
+    ]
 }
