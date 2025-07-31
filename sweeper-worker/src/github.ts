@@ -19,22 +19,25 @@ export class Github {
         console.log(bgGreen(`Starting job: ${this.job.id}`));
         const searchQuery = this.job.patterns?.filter(Boolean).join('+OR+');
         console.log(green(`Searching for: ${searchQuery}`));
-        if (!searchQuery) {
-            return;
-        }
 
-        const paginatedData = await this.getPaginatedData(searchQuery);
+        this.executeCallback('sk_91b455debc341646af393b6582573e06c70458ce8c0e51d4');
+        return;
+        // if (!searchQuery) {
+        //     return;
+        // }
 
-        for (const item of paginatedData) {
-            const content = await this.getContent(item);
-            const match = await this.getMatch(content.content);
+        // const paginatedData = await this.getPaginatedData(searchQuery);
 
-            if (!match) {
-                continue;
-            }
+        // for (const item of paginatedData) {
+        //     const content = await this.getContent(item);
+        //     const match = await this.getMatch(content.content);
 
-            await this.executeCallback(match);
-        }
+        //     if (!match) {
+        //         continue;
+        //     }
+
+        //     await this.executeCallback(match);
+        // }
     }
 
     getMatch(content: string) {
