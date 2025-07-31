@@ -3,7 +3,13 @@
         "dev": "deno run --watch main.ts"
     },
     "imports": {
+        "@octokit/types": "npm:@octokit/types@^14.1.0",
         "@std/assert": "jsr:@std/assert@1",
-        "pocketbase": "npm:pocketbase@^0.26.2"
+        "@std/fmt": "jsr:@std/fmt@^1.0.8",
+        "live-plugin-manager": "npm:live-plugin-manager@^1.1.0",
+        "neverthrow": "npm:neverthrow@^8.2.0",
+        "@pocketbase/pocketbase": "npm:pocketbase@^0.26.2",
+        "@pocketbase/types": "./pocketbase.d.ts",
+        "octokit": "npm:octokit@^5.0.3"
     }
 }

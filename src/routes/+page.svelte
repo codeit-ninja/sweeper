@@ -5,9 +5,10 @@
     import { Button } from '$lib/components/ui/button';
     import { dialog } from '$lib/components/ui/dialog';
     import { H } from '$lib/components/ui/h';
-    import { Input, Options } from '$lib/components/ui/input';
+    import { Editor, Input, Options } from '$lib/components/ui/input';
     import { onMount } from 'svelte';
     import { resource } from 'runed';
+    import Label from '$lib/components/ui/input/label.svelte';
 
     const submit = async (event: Event) => {
         event.preventDefault();
@@ -87,6 +88,10 @@
                     },
                 ]}
             />
+        </div>
+        <div class="mb-6">
+            <Label>Callback</Label>
+            <Editor />
         </div>
         <div class="ms-auto mt-auto">
             <Button>Create Scan</Button>

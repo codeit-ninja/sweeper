@@ -42,41 +42,9 @@ export class Scanner extends Bootable {
         //this.#interval = setInterval(() => this.checkForJobs(), 1000);
         this.checkForJobs();
         this.worker = new Worker();
-
-        this.worker.onmessage = (event: MessageEvent<HitEvent>) => {
-            if (event.data.type === 'hit') {
-                const { jobId, repo, keys, hash } = event.data.payload;
-
-                app.database.getTable('scan_hits').insert({
-                    jobId,
-                    output: { repo, hash, keys },
-                });
-            }
-        };
     }
 
-    async checkForJobs() {
-        const scanJobs = await app.database.getTable('scan_jobs').getMany({ startedAt: null });
-        console.log(scanJobs);
-        if (scanJobs.isOk()) {
-            if (scanJobs.value.length === 0) {
-                return;
-            }
-
-            this.worker!.postMessage({ type: 'jobs', payload: scanJobs.value });
-
-            scanJobs.value.forEach((job) => {
-                app.database.getTable('scan_jobs').update(
-                    {
-                        startedAt: new Date().toISOString(),
-                    },
-                    {
-                        id: job.id,
-                    },
-                );
-            });
-        }
-    }
+    async checkForJobs() {}
 
     create(name: string, matcher: string, patterns: string[]): ResultAsync<QueryResult, ScannerError> {
         const job = {

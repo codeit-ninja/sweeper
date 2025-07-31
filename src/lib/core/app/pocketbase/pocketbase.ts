@@ -11,6 +11,7 @@ export enum Collections {
 	Mfas = "_mfas",
 	Otps = "_otps",
 	Superusers = "_superusers",
+	Settings = "settings",
 	SweepJobResults = "sweep_job_results",
 	SweepJobs = "sweep_jobs",
 	Users = "users",
@@ -92,6 +93,11 @@ export type SuperusersRecord = {
 	verified?: boolean
 }
 
+export type SettingsRecord<Tvalue = unknown> = {
+	id: string
+	value?: null | Tvalue
+}
+
 export type SweepJobResultsRecord<Toutput = unknown> = {
 	createdAt?: IsoDateString
 	id: string
@@ -101,6 +107,7 @@ export type SweepJobResultsRecord<Toutput = unknown> = {
 }
 
 export type SweepJobsRecord<Tpatterns = unknown> = {
+	callback?: string
 	createdAt?: IsoDateString
 	finishedAt?: IsoDateString
 	id: string
@@ -130,6 +137,7 @@ export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRec
 export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
 export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
 export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
+export type SettingsResponse<Tvalue = unknown, Texpand = unknown> = Required<SettingsRecord<Tvalue>> & BaseSystemFields<Texpand>
 export type SweepJobResultsResponse<Toutput = unknown, Texpand = unknown> = Required<SweepJobResultsRecord<Toutput>> & BaseSystemFields<Texpand>
 export type SweepJobsResponse<Tpatterns = unknown, Texpand = unknown> = Required<SweepJobsRecord<Tpatterns>> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
@@ -142,6 +150,7 @@ export type CollectionRecords = {
 	_mfas: MfasRecord
 	_otps: OtpsRecord
 	_superusers: SuperusersRecord
+	settings: SettingsRecord
 	sweep_job_results: SweepJobResultsRecord
 	sweep_jobs: SweepJobsRecord
 	users: UsersRecord
@@ -153,6 +162,7 @@ export type CollectionResponses = {
 	_mfas: MfasResponse
 	_otps: OtpsResponse
 	_superusers: SuperusersResponse
+	settings: SettingsResponse
 	sweep_job_results: SweepJobResultsResponse
 	sweep_jobs: SweepJobsResponse
 	users: UsersResponse
@@ -167,6 +177,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: '_mfas'): RecordService<MfasResponse>
 	collection(idOrName: '_otps'): RecordService<OtpsResponse>
 	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
+	collection(idOrName: 'settings'): RecordService<SettingsResponse>
 	collection(idOrName: 'sweep_job_results'): RecordService<SweepJobResultsResponse>
 	collection(idOrName: 'sweep_jobs'): RecordService<SweepJobsResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>

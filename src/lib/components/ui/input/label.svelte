@@ -7,6 +7,6 @@
     let { children, ...restProps }: Props = $props();
 </script>
 
-<Label.Root {...restProps} class={cn('font-medium uppercase', restProps.class)}>
+<Label.Root {...restProps} class={cn('font-medium text-gray-500 uppercase', restProps.class)}>
     {@render children?.()}
 </Label.Root>

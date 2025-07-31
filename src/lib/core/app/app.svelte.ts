@@ -8,6 +8,7 @@ import { Command } from '@tauri-apps/plugin-shell';
 import { watch } from 'runed';
 import { appDataDir } from '@tauri-apps/api/path';
 import { Pocketbase } from './pocketbase';
+import { Settings } from './settings.svelte';
 
 export type Route = {
     name: string;
@@ -19,20 +20,16 @@ export type Route = {
     };
 };
 
-export interface AppSettings {
-    githubToken: string;
-}
-
 export class App extends Bootable {
     enabled = true;
 
     manualBoot = true;
 
-    database = new Database();
-
     scanner = new Scanner();
 
     pocketbase = new Pocketbase();
+
+    settings = new Settings();
 
     routes = $state<Route[]>([
         {
@@ -59,14 +56,9 @@ export class App extends Bootable {
 
     store = $state<Store>() as Store;
 
-    settings: AppSettings = $state({
-        githubToken: '',
-    });
-
     async boot() {
         await DB.load('sqlite:data.db');
         await this.scanner.boot();
-        await this.database.boot();
 
         const rootDir = await appDataDir();
         const command = Command.sidecar('binaries/pocketbase', [
@@ -79,7 +71,7 @@ export class App extends Bootable {
         await command.spawn();
 
         this.store = await Store.load('settings.json');
-        this.settings = (await this.store.get<AppSettings>('settings')) || this.settings;
+        //this.settings = (await this.store.get<AppSettings>('settings')) || this.settings;
 
         $effect.root(() => {
             watch(
